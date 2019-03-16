@@ -78,6 +78,7 @@ const handler = async event => {
 
     try {
       await pExec(runFormatCmd, execArgs);
+    } catch {
     } finally {
       await pExec(gitConfigEmailCmd, execArgs);
       await pExec(gitConfigNameCmd, execArgs);
