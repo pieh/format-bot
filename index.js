@@ -38,8 +38,8 @@ const handler = async event => {
   } https://${accessToken}@github.com/${PRBranchInfo.owner}/${
     PRBranchInfo.repo
   }.git ${repoCloneDir}`;
-  const installDepsCmd = `yarn`;
-  const runFormatCmd = `yarn format`;
+  const installDepsCmd = `npm`;
+  const runFormatCmd = `npm run format`;
   const stageFilesCmd = `git add .`;
   const commitFilesCmd = `git commit --author="pieh-peril-test<misiek.piechowiak@gmail.com>" -m "chore: format"`;
   const pushCmd = `git push origin ${PRBranchInfo.ref}`;
@@ -61,7 +61,8 @@ const app = express();
 
 app.get(`/format`, (req, res) => {
   if (req && req.query && req.query.pr) {
-    handler(req.query.pr);
+    console.log(req.query);
+    handler(req.query);
     res.send("running");
     return;
   }
