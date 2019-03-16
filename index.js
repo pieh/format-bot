@@ -62,6 +62,7 @@ const handler = async event => {
     const installDepsCmd = `yarn --production=false`;
     const runFormatCmd = `yarn format`;
     const stageFilesCmd = `git add .`;
+    const unstageYarnLockCmd = `git reset HEAD yarn.lock`;
     const gitConfigEmailCmd = `git config user.email "misiek.piechowiak@gmail.com"`;
     const gitConfigNameCmd = `git config user.name "pieh-peril-test"`;
     const commitFilesCmd = `git commit --author="pieh-peril-test<misiek.piechowiak@gmail.com>" -m "chore: format"`;
@@ -83,6 +84,7 @@ const handler = async event => {
       await pExec(gitConfigEmailCmd, execArgs);
       await pExec(gitConfigNameCmd, execArgs);
       await pExec(stageFilesCmd, execArgs);
+      await pExec(unstageYarnLockCmd, execArgs);
       await pExec(commitFilesCmd, execArgs);
       await pExec(pushCmd, execArgs);
     }
