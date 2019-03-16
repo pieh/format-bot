@@ -69,6 +69,6 @@ app.get(`/format`, (req, res) => {
   res.send("missing stuff");
 });
 
-app.listen(80, () => {
+app.listen(process.env.PORT, () => {
   console.log("Server started");
 });
