@@ -49,10 +49,13 @@ const handler = async event => {
     await pExec(cloneCmd, execArgs);
     execArgs.cwd = repoCloneDir;
     await pExec(installDepsCmd, execArgs);
-    await pExec(runFormatCmd, execArgs);
-    await pExec(stageFilesCmd, execArgs);
-    await pExec(commitFilesCmd, execArgs);
-    await pExec(pushCmd, execArgs);
+    try {
+      await pExec(runFormatCmd, execArgs);
+    } finally {
+      await pExec(stageFilesCmd, execArgs);
+      await pExec(commitFilesCmd, execArgs);
+      await pExec(pushCmd, execArgs);
+    }
   } finally {
     await fs.removeSync(repoCloneDir);
   }
