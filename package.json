@@ -5,13 +5,15 @@
   "author": "Michal Piechowiak <misiek.piechowiak@gmail.com>",
   "license": "MIT",
   "scripts": {
-    "start": "node ./index.js",
-    "build": "./build.sh"
+    "start": "node ./index.js"
   },
   "dependencies": {
     "@octokit/rest": "^16.19.0",
     "dotenv": "^7.0.0",
     "express": "^4.16.4",
     "fs-extra": "^7.0.1"
+  },
+  "engines": {
+    "yarn": "1.x"
   }
 }

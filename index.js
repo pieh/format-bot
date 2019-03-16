@@ -9,6 +9,7 @@ const user = `pieh`;
 
 const pExec = (command, args = {}) =>
   new Promise((resolve, reject) => {
+    console.log(`$ ${command}`);
     childProcess.exec(command, args, (err, stdout, stderr) => {
       console.error(stderr);
       console.log(stdout);
@@ -33,28 +34,28 @@ const handler = async event => {
     stdio: `inherit`
   };
 
-  const cloneCmd = `git clone --single-branch --branch ${
-    PRBranchInfo.ref
-  } https://${accessToken}@github.com/${PRBranchInfo.owner}/${
-    PRBranchInfo.repo
-  }.git ${repoCloneDir}`;
-  const installDepsCmd = `yarn`;
-  const runFormatCmd = `yarn format`;
-  const stageFilesCmd = `git add .`;
-  const commitFilesCmd = `git commit --author="pieh-peril-test<misiek.piechowiak@gmail.com>" -m "chore: format"`;
-  const pushCmd = `git push origin ${PRBranchInfo.ref}`;
+  try {
+    const cloneCmd = `git clone --single-branch --branch ${
+      PRBranchInfo.ref
+    } https://${accessToken}@github.com/${PRBranchInfo.owner}/${
+      PRBranchInfo.repo
+    }.git ${repoCloneDir}`;
+    const installDepsCmd = `yarn`;
+    const runFormatCmd = `yarn format`;
+    const stageFilesCmd = `git add .`;
+    const commitFilesCmd = `git commit --author="pieh-peril-test<misiek.piechowiak@gmail.com>" -m "chore: format"`;
+    const pushCmd = `git push origin ${PRBranchInfo.ref}`;
 
-  console.log(cloneCmd);
-
-  await pExec(cloneCmd, execArgs);
-  execArgs.cwd = repoCloneDir;
-  await pExec(installDepsCmd, execArgs);
-  await pExec(runFormatCmd, execArgs);
-  await pExec(stageFilesCmd, execArgs);
-  await pExec(commitFilesCmd, execArgs);
-  await pExec(pushCmd, execArgs);
-
-  await fs.removeSync(repoCloneDir);
+    await pExec(cloneCmd, execArgs);
+    execArgs.cwd = repoCloneDir;
+    await pExec(installDepsCmd, execArgs);
+    await pExec(runFormatCmd, execArgs);
+    await pExec(stageFilesCmd, execArgs);
+    await pExec(commitFilesCmd, execArgs);
+    await pExec(pushCmd, execArgs);
+  } finally {
+    await fs.removeSync(repoCloneDir);
+  }
 };
 
 const app = express();
