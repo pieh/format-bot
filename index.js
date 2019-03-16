@@ -65,7 +65,7 @@ const handler = async event => {
     const unstageYarnLockCmd = `git reset HEAD yarn.lock`;
     const gitConfigEmailCmd = `git config user.email "misiek.piechowiak@gmail.com"`;
     const gitConfigNameCmd = `git config user.name "pieh-peril-test"`;
-    const commitFilesCmd = `git commit --author="pieh-peril-test<misiek.piechowiak@gmail.com>" -m "chore: format"`;
+    const commitFilesCmd = `git commit --author="pieh-peril-test<misiek.piechowiak@gmail.com>" --no-verify -m "chore: format"`;
     const pushCmd = `git push origin ${PRBranchInfo.ref}`;
 
     await pExec(cloneCmd, execArgs);
