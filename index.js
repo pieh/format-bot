@@ -38,9 +38,8 @@ const handler = async event => {
   } https://${accessToken}@github.com/${PRBranchInfo.owner}/${
     PRBranchInfo.repo
   }.git ${repoCloneDir}`;
-  // use npm and not yarn ... because it doesn't handle workspaces ;)
-  const installDepsCmd = `npm install`;
-  const runFormatCmd = `npm run format`;
+  const installDepsCmd = `yarn`;
+  const runFormatCmd = `yarn format`;
   const stageFilesCmd = `git add .`;
   const commitFilesCmd = `git commit --author="pieh-peril-test<misiek.piechowiak@gmail.com>" -m "chore: format"`;
   const pushCmd = `git push origin ${PRBranchInfo.ref}`;
