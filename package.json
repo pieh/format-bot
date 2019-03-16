@@ -5,7 +5,8 @@
   "author": "Michal Piechowiak <misiek.piechowiak@gmail.com>",
   "license": "MIT",
   "scripts": {
-    "start": "node ./index.js"
+    "start": "node ./index.js",
+    "build": "./build.sh"
   },
   "dependencies": {
     "@octokit/rest": "^16.19.0",
