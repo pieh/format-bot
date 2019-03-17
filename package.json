@@ -6,7 +6,7 @@
   "license": "MIT",
   "scripts": {
     "start": "node ./index.js",
-    "build": "node ./build.js"
+    "heroku-prebuild": "node ./build.js"
   },
   "dependencies": {
     "@octokit/rest": "^16.19.0",
