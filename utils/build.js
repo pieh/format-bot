@@ -1,5 +1,6 @@
 const Octokit = require("@octokit/rest");
 const fs = require(`fs-extra`);
+const _ = require(`lodash`);
 
 const { pExec } = require(`.`);
 const { repo, owner } = require(`../common`);
@@ -42,6 +43,6 @@ const addGatsbyDevDeps = async () => {
   return packageJson["lint-staged"];
 };
 
-exports.addGatsbyDevDeps = addGatsbyDevDeps;
+exports.addGatsbyDevDeps = _.memoize(addGatsbyDevDeps);
 
 // addGatsbyDevDeps();

@@ -50,15 +50,10 @@ exports.createServer = app => {
       let user = null;
 
       const accessToken = (req && req.headers.authorization) || "";
-      console.log("has accessToken", accessToken);
       if (accessToken) {
         try {
           user = await getUserInfo(accessToken);
-          console.log("user", user);
-        } catch (e) {
-          console.log("error", e);
-          const b = 4;
-        }
+        } catch (e) {}
       }
       // add the user to the context
       return { user };
