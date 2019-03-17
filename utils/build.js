@@ -27,6 +27,14 @@ const addGatsbyDevDeps = async () => {
 
   delete packageJson.devDependencies[`husky`];
   delete packageJson.devDependencies[`lint-staged`];
+  delete packageJson.devDependencies[`jest`];
+  delete packageJson.devDependencies[`jest-cli`];
+  delete packageJson.devDependencies[`jest-junit`];
+  delete packageJson.devDependencies[`chokidar`];
+  delete packageJson.devDependencies[`lerna`];
+  delete packageJson.devDependencies[`flow-bin`];
+  delete packageJson.devDependencies[`plop`];
+  delete packageJson.devDependencies[`yargs`];
 
   currentPackageJson.devDependencies = packageJson.devDependencies;
 
