@@ -18,9 +18,12 @@ const getAdminTeamMembers = _.memoize(getAdminTeamMembersImpl);
 exports.getAdminTeamMembers = getAdminTeamMembers;
 
 exports.getPermissions = async user => {
+  const team = await getAdminTeamMembers();
+  console.log("check permissions", {
+    user,
+    team
+  });
   if (user) {
-    const team = await getAdminTeamMembers();
-
     if (team.includes(user.sub)) {
       return {
         canFormat: true
