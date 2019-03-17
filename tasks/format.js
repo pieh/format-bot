@@ -124,6 +124,6 @@ module.exports = async ({ pr }, { setStatus }) => {
     }
   } finally {
     setStatus(`Cleaning up`);
-    await fs.removeSync(repoCloneDir);
+    // await fs.removeSync(repoCloneDir);
   }
 };
