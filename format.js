@@ -54,7 +54,7 @@ exports.format = async context => {
     } https://${accessToken}@github.com/${PRBranchInfo.owner}/${
       PRBranchInfo.repo
     }.git ${repoCloneDir}`;
-    const installDepsCmd = `yarn --production=false`;
+    //const installDepsCmd = `yarn --production=false`;
     const runFormatCmd = `yarn format`;
     const stageFilesCmd = `git add .`;
     const unstageYarnLockCmd = `git reset HEAD yarn.lock`;
@@ -66,11 +66,11 @@ exports.format = async context => {
     await pExec(cloneCmd, execArgs);
     execArgs.cwd = repoCloneDir;
 
-    const restorePackageJson = await disableWorkspaces(repoCloneDir);
+    // const restorePackageJson = await disableWorkspaces(repoCloneDir);
 
-    await pExec(installDepsCmd, execArgs);
+    // await pExec(installDepsCmd, execArgs);
 
-    await restorePackageJson();
+    // await restorePackageJson();
 
     try {
       await pExec(runFormatCmd, execArgs);

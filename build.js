@@ -20,15 +20,16 @@ const addGatsbyDevDeps = async () => {
 
   const packageJson = JSON.parse(content);
 
-  // const devDeps = packageJson.devDependencies;
-
   const currentPackageJson = require(`./package.json`);
 
   currentPackageJson.devDependencies = packageJson.devDependencies;
 
-  fs.outputFile(`./package.json`, JSON.stringify(currentPackageJson));
+  await fs.outputFile(
+    `./package.json`,
+    JSON.stringify(currentPackageJson, null, 2)
+  );
 
-  const b = 4;
+  await pExec(`yarn`)
 };
 
 addGatsbyDevDeps();
