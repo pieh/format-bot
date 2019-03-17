@@ -34,4 +34,4 @@ exports.addGatsbyDevDeps = async () => {
   await pExec(`yarn --production=false`);
 };
 
-addGatsbyDevDeps();
+// addGatsbyDevDeps();
