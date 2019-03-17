@@ -56,9 +56,6 @@ module.exports = async ({ pr }, { setStatus }) => {
     return { format, fileList, commands: lintStagedConf[format] };
   });
 
-  // await new Promise(resolve => setTimeout(resolve, 4000));
-  // return;
-
   if (!tasks.some(task => task.fileList.length > 0)) {
     console.log("Nothing to format");
     return;
@@ -75,10 +72,7 @@ module.exports = async ({ pr }, { setStatus }) => {
     } https://${accessToken}@github.com/${PRBranchInfo.owner}/${
       PRBranchInfo.repo
     }.git ${repoCloneDir}`;
-    //const installDepsCmd = `yarn --production=false`;
-    // const runFormatCmd = `yarn format`;
-    // const stageFilesCmd = `git add .`;
-    // const unstageYarnLockCmd = `git reset HEAD yarn.lock`;
+
     const gitConfigEmailCmd = `git config user.email "misiek.piechowiak@gmail.com"`;
     const gitConfigNameCmd = `git config user.name "GatsbyJS Bot"`;
     const commitFilesCmd = `git commit --author="GatsbyJS Bot<misiek.piechowiak@gmail.com>" --no-verify -m "chore: format"`;
@@ -87,9 +81,10 @@ module.exports = async ({ pr }, { setStatus }) => {
     await pExec(cloneCmd, execArgs);
     execArgs.cwd = repoCloneDir;
 
-    // const restorePackageJson = await disableWorkspaces(repoCloneDir);
     setStatus(`Formatting`);
-    // await pExec(installDepsCmd, execArgs);
+
+    const toComment = [];
+
     await Promise.all(
       tasks.map(async ({ fileList, commands }) => {
         if (fileList.length <= 0) {
@@ -99,21 +94,34 @@ module.exports = async ({ pr }, { setStatus }) => {
           const cmd = [command.bin, ...command.args, ...fileList].join(` `);
           try {
             await pExec(cmd, execArgs);
-          } catch {}
+          } catch (e) {
+            if (command.bin.incudes(`prettier`)) {
+              toComment.push(e.stderr.replace(/\[error\]/g, ``));
+            }
+          }
         }
       })
     );
 
-    // await restorePackageJson();
+    if (toComment.length > 0) {
+      await octokit.issues.createComment({
+        owner,
+        repo,
+        number: pr,
+        body: toComment.map(s => `\`\`\`${s}\`\`\``).join(`\n\n`)
+      });
+    }
 
-    // await pExec(runFormatCmd, execArgs);
     setStatus(`Committing and pushing`);
     await pExec(gitConfigEmailCmd, execArgs);
     await pExec(gitConfigNameCmd, execArgs);
-    // await pExec(stageFilesCmd, execArgs);
-    // await pExec(unstageYarnLockCmd, execArgs);
-    await pExec(commitFilesCmd, execArgs);
-    await pExec(pushCmd, execArgs);
+
+    try {
+      await pExec(commitFilesCmd, execArgs);
+      await pExec(pushCmd, execArgs);
+    } catch {
+      // commit exits with non-zero if there is nothing to commit
+    }
   } finally {
     setStatus(`Cleaning up`);
     await fs.removeSync(repoCloneDir);

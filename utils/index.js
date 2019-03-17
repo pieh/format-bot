@@ -11,9 +11,14 @@ exports.pExec = (command, execArgs = {}, log = command) =>
       }
       console.log(stdout);
       if (err) {
+        err.stderr = stderr;
+        err.stdout = stdout;
         reject(err);
       }
 
-      resolve();
+      resolve({
+        stderr,
+        stdout
+      });
     });
   });
