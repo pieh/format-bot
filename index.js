@@ -1,6 +1,6 @@
 const express = require(`express`);
 const Octokit = require("@octokit/rest");
-const format = require(`./format`);
+const { format } = require(`./format`);
 require("dotenv").config();
 
 const octokit = new Octokit({

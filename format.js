@@ -1,22 +1,8 @@
-const childProcess = require("child_process");
 const path = require("path");
 const fs = require(`fs-extra`);
+const { pExec, repo, owner } = require(`./utils`);
 
 const accessToken = process.env.GITHUB_ACCESS_TOKEN;
-
-const pExec = (command, execArgs = {}, log = command) =>
-  new Promise((resolve, reject) => {
-    console.log(`$ ${log}`);
-    childProcess.exec(command, execArgs, (err, stdout, stderr) => {
-      console.error(stderr);
-      console.log(stdout);
-      if (err) {
-        reject(err);
-      }
-
-      resolve();
-    });
-  });
 
 const disableWorkspaces = async repoCloneDir => {
   console.log("> Disabling workspaces");
@@ -37,9 +23,6 @@ const disableWorkspaces = async repoCloneDir => {
   // const package require
 };
 
-const owner = "pieh";
-const repo = "gatsby";
-
 const getPRBranchInfo = async context => {
   const { octokit, args } = context;
   const result = await octokit.pulls.get({
@@ -55,7 +38,7 @@ const getPRBranchInfo = async context => {
   };
 };
 
-const handler = async context => {
+exports.format = async context => {
   const { args } = context;
   const repoCloneDir = path.join(process.cwd(), `_pr_clone_${args.pr}`);
 
@@ -104,5 +87,3 @@ const handler = async context => {
     await fs.removeSync(repoCloneDir);
   }
 };
-
-module.exports = handler;
