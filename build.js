@@ -8,7 +8,7 @@ const octokit = new Octokit({
   auth: `token ${process.env.GITHUB_ACCESS_TOKEN}`
 });
 
-exports.addGatsbyDevDeps = async () => {
+const addGatsbyDevDeps = async () => {
   const data = await octokit.repos.getContents({
     owner,
     repo,
@@ -32,6 +32,10 @@ exports.addGatsbyDevDeps = async () => {
   console.log("augmenting package.json");
 
   await pExec(`yarn --production=false`);
+
+  return packageJson["lint-staged"];
 };
+
+exports.addGatsbyDevDeps = addGatsbyDevDeps;
 
 // addGatsbyDevDeps();
