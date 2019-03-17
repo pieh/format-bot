@@ -29,7 +29,7 @@ const addGatsbyDevDeps = async () => {
     JSON.stringify(currentPackageJson, null, 2)
   );
 
-  await pExec(`yarn`)
+  await pExec(`yarn --production=false`);
 };
 
 addGatsbyDevDeps();
