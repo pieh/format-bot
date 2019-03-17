@@ -33,6 +33,8 @@ const addGatsbyDevDeps = async () => {
 
   await pExec(`yarn --production=false`);
 
+  console.log("done");
+
   return packageJson["lint-staged"];
 };
 
