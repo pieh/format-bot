@@ -17,6 +17,3 @@ exports.pExec = (command, execArgs = {}, log = command) =>
       resolve();
     });
   });
-
-exports.owner = "pieh";
-exports.repo = "gatsby";

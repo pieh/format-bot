@@ -1,0 +1,52 @@
+enum PullRequestCheckStatus {
+  NONE
+  PENDING
+  SUCCESS
+  FAILURE
+}
+
+type PullRequest {
+  number: Int!
+  title: String!
+  lintStatus: PullRequestCheckStatus!
+  url: String!
+}
+
+type Permissions {
+  canFormat: Boolean!
+}
+
+type TaskArgs {
+  pr: Int!
+}
+
+type Task {
+  taskID: String!
+  type: String!
+  args: TaskArgs!
+}
+
+type Job {
+  uuid: Int,
+  status: String!
+  task: Task,
+}
+
+type Query {
+  pullRequests: [PullRequest!]!
+  permissions: Permissions!
+  tasks: [Task!]!
+  job: Job
+  finishedJobs: [Job!]!
+}
+
+type Subscription {
+  taskAdded: Task!
+  taskRemoved: Task!
+  jobChanged: Job
+  currentJob: Job
+}
+
+type Mutation {
+  format(pr: Int!): Boolean!
+}

@@ -1,35 +1,19 @@
 const path = require("path");
 const fs = require(`fs-extra`);
-const { pExec, repo, owner } = require(`./utils`);
+const { pExec } = require(`../utils`);
+const { repo, owner } = require(`../common`);
 const micromatch = require("micromatch");
+
+const octokit = require(`../utils/octokit`);
+const { getLintStagedConf } = require(`../utils/init`);
 
 const accessToken = process.env.GITHUB_ACCESS_TOKEN;
 
-// const disableWorkspaces = async repoCloneDir => {
-//   console.log("> Disabling workspaces");
-//   const packageJsonPath = path.join(repoCloneDir, "package.json");
-//   const packageJsonString = await fs.readFile(packageJsonPath, "utf-8");
-//   const packageJson = JSON.parse(packageJsonString);
-
-//   delete packageJson.workspaces;
-
-//   console.log(JSON.stringify(packageJson));
-
-//   await fs.outputFile(packageJsonPath, JSON.stringify(packageJson));
-
-//   return async () => {
-//     console.log("> Re-enabling workspaces");
-//     await fs.outputFile(packageJsonPath, packageJsonString);
-//   };
-//   // const package require
-// };
-
-const getPRBranchInfo = async context => {
-  const { octokit, args } = context;
+const getPRBranchInfo = async pr => {
   const result = await octokit.pulls.get({
     owner,
     repo,
-    number: args.pr
+    number: pr
   });
 
   return {
@@ -39,12 +23,11 @@ const getPRBranchInfo = async context => {
   };
 };
 
-const getChangedFiles = async context => {
-  const { octokit, args } = context;
+const getChangedFiles = async pr => {
   const result = await octokit.pulls.listFiles({
     owner,
     repo,
-    number: args.pr
+    number: pr
   });
 
   return result.data
@@ -52,14 +35,17 @@ const getChangedFiles = async context => {
     .map(file => file.filename);
 };
 
-exports.format = async context => {
-  const { args } = context;
-  const repoCloneDir = path.join(process.cwd(), `_pr_clone_${args.pr}`);
+module.exports = async ({ pr }, { setStatus }) => {
+  const repoCloneDir = path.join(process.cwd(), `_pr_clone_${pr}`);
 
-  const PRBranchInfo = await getPRBranchInfo(context);
-  const changedFiles = await getChangedFiles(context);
+  setStatus(`Getting branch information`);
+  const PRBranchInfo = await getPRBranchInfo(pr);
+  setStatus(`Getting list of changed files`);
+  const changedFiles = await getChangedFiles(pr);
 
-  const formats = Object.keys(context.lintStagedConf);
+  const lintStagedConf = await getLintStagedConf();
+
+  const formats = Object.keys(lintStagedConf);
 
   const tasks = formats.map(format => {
     const fileList = micromatch(changedFiles, format, {
@@ -67,8 +53,11 @@ exports.format = async context => {
       dot: true
     });
 
-    return { format, fileList, commands: context.lintStagedConf[format] };
+    return { format, fileList, commands: lintStagedConf[format] };
   });
+
+  // await new Promise(resolve => setTimeout(resolve, 4000));
+  // return;
 
   if (!tasks.some(task => task.fileList.length > 0)) {
     console.log("Nothing to format");
@@ -80,6 +69,7 @@ exports.format = async context => {
   };
 
   try {
+    setStatus(`Cloning`);
     const cloneCmd = `git clone --single-branch --branch ${
       PRBranchInfo.ref
     } https://${accessToken}@github.com/${PRBranchInfo.owner}/${
@@ -98,7 +88,7 @@ exports.format = async context => {
     execArgs.cwd = repoCloneDir;
 
     // const restorePackageJson = await disableWorkspaces(repoCloneDir);
-
+    setStatus(`Formatting`);
     // await pExec(installDepsCmd, execArgs);
     await Promise.all(
       tasks.map(async ({ fileList, commands }) => {
@@ -117,7 +107,7 @@ exports.format = async context => {
     // await restorePackageJson();
 
     // await pExec(runFormatCmd, execArgs);
-
+    setStatus(`Committing and pushing`);
     await pExec(gitConfigEmailCmd, execArgs);
     await pExec(gitConfigNameCmd, execArgs);
     // await pExec(stageFilesCmd, execArgs);
@@ -125,6 +115,7 @@ exports.format = async context => {
     await pExec(commitFilesCmd, execArgs);
     await pExec(pushCmd, execArgs);
   } finally {
+    setStatus(`Cleaning up`);
     await fs.removeSync(repoCloneDir);
   }
 };

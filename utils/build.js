@@ -1,6 +1,8 @@
 const Octokit = require("@octokit/rest");
-const { pExec, repo, owner } = require(`./utils`);
 const fs = require(`fs-extra`);
+
+const { pExec } = require(`.`);
+const { repo, owner } = require(`../common`);
 
 require("dotenv").config();
 
@@ -20,20 +22,22 @@ const addGatsbyDevDeps = async () => {
 
   const packageJson = JSON.parse(content);
 
-  const currentPackageJson = require(`./package.json`);
+  const currentPackageJson = require(`../package.json`);
+
+  delete packageJson.devDependencies[`husky`];
+  delete packageJson.devDependencies[`lint-staged`];
 
   currentPackageJson.devDependencies = packageJson.devDependencies;
 
-  await fs.outputFile(
-    `./package.json`,
-    JSON.stringify(currentPackageJson, null, 2)
-  );
+  if (!process.env.SKIP_DEPS) {
+    await fs.outputFile(
+      `./package.json`,
+      JSON.stringify(currentPackageJson, null, 2)
+    );
 
-  console.log("augmenting package.json");
-
-  await pExec(`yarn --production=false`);
-
-  console.log("done");
+    console.log("augmenting package.json");
+    await pExec(`yarn --production=false`);
+  }
 
   return packageJson["lint-staged"];
 };
