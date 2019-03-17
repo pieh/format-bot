@@ -95,7 +95,7 @@ module.exports = async ({ pr }, { setStatus }) => {
           try {
             await pExec(cmd, execArgs);
           } catch (e) {
-            if (command.bin.incudes(`prettier`)) {
+            if (command.bin.includes(`prettier`)) {
               toComment.push(e.stderr.replace(/\[error\]/g, ``));
             }
           }
