@@ -8,7 +8,7 @@ const octokit = new Octokit({
   auth: `token ${process.env.GITHUB_ACCESS_TOKEN}`
 });
 
-exports.addGatsbyDevDeps = async () => {
+const addGatsbyDevDeps = async () => {
   const data = await octokit.repos.getContents({
     owner,
     repo,
