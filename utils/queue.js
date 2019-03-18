@@ -35,7 +35,6 @@ const queue = new BetterQueue(
       cb(null, getTaskID(task));
     },
     merge: (oldTask, newTask, cb) => {
-      console.log("merge");
       cb(null, oldTask);
     },
     filter: (task, cb) => {
