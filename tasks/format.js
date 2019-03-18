@@ -96,7 +96,7 @@ module.exports = async ({ pr }, { setStatus }) => {
             await pExec(cmd, execArgs);
           } catch (e) {
             if (command.bin.includes(`prettier`)) {
-              toComment.push(e.stderr.replace(/\[error\]/g, ``));
+              toComment.push(e.stderr.replace(/\[error\]/g, ``).trim());
             }
           }
         }
@@ -108,7 +108,7 @@ module.exports = async ({ pr }, { setStatus }) => {
         owner,
         repo,
         number: pr,
-        body: toComment.map(s => `\`\`\`${s}\`\`\``).join(`\n\n`)
+        body: toComment.map(s => `\`\`\`\n${s}\n\`\`\``).join(`\n\n`)
       });
     }
 
@@ -124,6 +124,6 @@ module.exports = async ({ pr }, { setStatus }) => {
     }
   } finally {
     setStatus(`Cleaning up`);
-    // await fs.removeSync(repoCloneDir);
+    await fs.removeSync(repoCloneDir);
   }
 };
