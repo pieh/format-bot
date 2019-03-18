@@ -1,2 +1,2 @@
-exports.owner = "pieh";
+exports.owner = "gatsbyjs";
 exports.repo = "gatsby";
