@@ -1,7 +1,7 @@
 const childProcess = require("child_process");
 
 const sanitzeOutput = out => {
-  out.replace(
+  return out.replace(
     new RegExp(process.env.GITHUB_ACCESS_TOKEN, "g"),
     "<GITHUB_ACCESS_TOKEN>"
   );
