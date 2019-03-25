@@ -78,9 +78,14 @@ init().then(() => {
 });
 
 const format = async pr => {
-  const slackMessage = await createSlackTracker(``, {
-    text: `Queued`,
-    state: SlackTaskState.QUEUED
+  const slackMessage = await createSlackTracker({
+    text: `Format PR - ${encodeURI(
+      `https://github.com/gatsbyjs/gatsby/pull/${pr}`
+    )}`,
+    status: {
+      text: `Queued`,
+      state: SlackTaskState.QUEUED
+    }
   });
   queue.push({
     type: "format",

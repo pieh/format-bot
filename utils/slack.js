@@ -36,20 +36,31 @@ const createAttachment = status => {
   ];
 };
 
-const createSlackTracker = async (msg, status) => {
+const createSlackTracker = async ({ text, status }) => {
+  let attachments = createAttachment(status);
   const result = await slack.chat.postMessage({
     channel,
-    text: msg,
-    attachments: createAttachment(status)
+    text,
+    attachments
   });
 
   return {
     setStatus: async status => {
       console.log("updating slack status", status);
+      attachments = createAttachment(status);
       await slack.chat.update({
         channel,
-        text: msg,
-        attachments: createAttachment(status),
+        text,
+        attachments,
+        ts: result.ts
+      });
+    },
+    updateText: async _text => {
+      text = _text;
+      await slack.chat.update({
+        channel,
+        text,
+        attachments,
         ts: result.ts
       });
     }
