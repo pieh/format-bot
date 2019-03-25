@@ -38,6 +38,10 @@ exports.newJob = task => {
     uuid,
     task,
     // status: `Starting`,
+    getText: task.context.slackMessage.getText,
+    updateText: async text => {
+      await task.context.slackMessage.updateText(text);
+    },
     setStatus: async (status, state = SlackTaskState.PROGRESS) => {
       job.status = status;
       await task.context.slackMessage.setStatus({

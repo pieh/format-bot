@@ -63,7 +63,8 @@ const createSlackTracker = async ({ text, status }) => {
         attachments,
         ts: result.ts
       });
-    }
+    },
+    getText: () => text
   };
 };
 

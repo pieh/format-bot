@@ -17,6 +17,10 @@ const getPRBranchInfo = async pr => {
   });
 
   return {
+    title: result.data.title,
+    mergeable: result.data.mergeable,
+    rebaseable: result.data.rebaseable,
+    mergeable_state: result.data.mergeable_state,
     ref: result.data.head.ref,
     owner: result.data.head.repo.owner.login,
     repo: result.data.head.repo.name
@@ -35,11 +39,15 @@ const getChangedFiles = async pr => {
     .map(file => file.filename);
 };
 
-module.exports = async ({ pr }, { setStatus }) => {
+module.exports = async ({ pr }, { setStatus, updateText, getText }) => {
+  const initialText = getText();
+
   const repoCloneDir = path.join(process.cwd(), `_pr_clone_${pr}`);
 
   setStatus(`Getting branch information`);
   const PRBranchInfo = await getPRBranchInfo(pr);
+  updateText(`${initialText}\n\`${PRBranchInfo.title}\``);
+
   setStatus(`Getting list of changed files`);
   const changedFiles = await getChangedFiles(pr);
 
