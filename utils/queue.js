@@ -77,8 +77,8 @@ init().then(() => {
   queue.resume();
 });
 
-const format = pr => {
-  const slackMessage = createSlackTracker(``, {
+const format = async pr => {
+  const slackMessage = await createSlackTracker(``, {
     text: `Queued`,
     state: SlackTaskState.QUEUED
   });
