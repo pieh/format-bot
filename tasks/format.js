@@ -123,7 +123,7 @@ module.exports = async ({ pr }, { setStatus }) => {
       // commit exits with non-zero if there is nothing to commit
     }
   } finally {
-    setStatus(`Cleaning up`);
+    await setStatus(`Cleaning up`);
     await fs.removeSync(repoCloneDir);
   }
 };

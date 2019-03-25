@@ -30,7 +30,7 @@ const createAttachment = status => {
 
   return [
     {
-      color: SlackTaskState[status.state],
+      color: status.state,
       text: status.text
     }
   ];
