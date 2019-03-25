@@ -46,7 +46,7 @@ module.exports = async ({ pr }, { setStatus, updateText, getText }) => {
 
   setStatus(`Getting branch information`);
   const PRBranchInfo = await getPRBranchInfo(pr);
-  updateText(`${initialText}\n\`${PRBranchInfo.title}\``);
+  updateText(`${initialText}\n\`${encodeURI(PRBranchInfo.title)}\``);
 
   setStatus(`Getting list of changed files`);
   const changedFiles = await getChangedFiles(pr);
