@@ -17,7 +17,7 @@ const SlackTaskState = {
   ERROR: `danger`
 };
 
-const tasks = {};
+let tasks = {};
 
 exports.setTasks = _tasks => (tasks = _tasks);
 
