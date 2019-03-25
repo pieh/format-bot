@@ -45,6 +45,7 @@ const createSlackTracker = async (msg, status) => {
 
   return {
     setStatus: async status => {
+      console.log("updating slack status", status);
       await slack.chat.update({
         channel,
         text: msg,
