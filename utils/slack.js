@@ -5,10 +5,11 @@ const slack = new Slack({ token: process.env.SLACK_ACCESS_TOKEN });
 
 exports.slack = slack;
 
-const sleep = delay => new Promise(resolve => setTimeout(resolve, delay));
+// const sleep = delay => new Promise(resolve => setTimeout(resolve, delay));
 
 // hardcoded channel on pieh's slack playground workspace
-const channel = `GH5A19D4Y`;
+// `GH5A19D4Y`
+const channel = process.env.SLACK_CHANNEL_ID;
 
 const SlackTaskState = {
   QUEUED: `#439FE0`,
