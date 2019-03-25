@@ -10,6 +10,53 @@ const sleep = delay => new Promise(resolve => setTimeout(resolve, delay));
 // hardcoded channel on pieh's slack playground workspace
 const channel = `GH5A19D4Y`;
 
+const SlackTaskState = {
+  QUEUED: `#439FE0`,
+  PROGRESS: `warning`,
+  FINISHED: `good`,
+  ERROR: `danger`
+};
+
+const tasks = {};
+
+exports.setTasks = _tasks => (tasks = _tasks);
+
+exports.SlackTaskState = SlackTaskState;
+
+const createAttachment = status => {
+  if (!status) {
+    return [];
+  }
+
+  return [
+    {
+      color: SlackTaskState[status.state],
+      text: status.text
+    }
+  ];
+};
+
+const createSlackTracker = async (msg, status) => {
+  const result = await slack.chat.postMessage({
+    channel,
+    text: msg,
+    attachments: createAttachment(status)
+  });
+
+  return {
+    setStatus: async status => {
+      await slack.chat.update({
+        channel,
+        text: `Format ${url}`,
+        attachments: createAttachment(status),
+        ts: result.ts
+      });
+    }
+  };
+};
+
+exports.createSlackTracker = createSlackTracker;
+
 const parseCommand = (cmd, context) =>
   yargs
     .command({
@@ -19,8 +66,14 @@ const parseCommand = (cmd, context) =>
         let url = null;
         if (args.ref === `master`) {
           url = `https://github.com/gatsbyjs/gatsby`;
+          await slack.chat.postEphemeral({
+            channel,
+            text: `Not supported yet`,
+            user: context.user_id
+          });
         } else if (!isNaN(args.ref)) {
           url = `https://github.com/gatsbyjs/gatsby/pull/${args.ref}`;
+          tasks.format(args.ref);
         } else {
           await slack.chat.postEphemeral({
             channel,
@@ -30,82 +83,82 @@ const parseCommand = (cmd, context) =>
           return false;
         }
 
-        try {
-          const result = await slack.chat.postMessage({
-            channel,
-            text: `Format ${url}`,
-            attachments: [
-              {
-                color: "#439FE0",
-                text: "Queued"
-              }
-            ]
-          });
-          await sleep(2000);
+        // try {
+        //   const result = await slack.chat.postMessage({
+        //     channel,
+        //     text: `Format ${url}`,
+        //     attachments: [
+        //       {
+        //         color: "#439FE0",
+        //         text: "Queued"
+        //       }
+        //     ]
+        //   });
+        //   await sleep(2000);
 
-          await slack.chat.update({
-            channel,
-            text: `Format ${url}`,
-            attachments: [
-              {
-                color: "warning",
-                text: "Cloning"
-              }
-            ],
-            ts: result.ts
-          });
+        //   await slack.chat.update({
+        //     channel,
+        //     text: `Format ${url}`,
+        //     attachments: [
+        //       {
+        //         color: "warning",
+        //         text: "Cloning"
+        //       }
+        //     ],
+        //     ts: result.ts
+        //   });
 
-          await sleep(2000);
+        //   await sleep(2000);
 
-          await slack.chat.update({
-            channel,
-            text: `Format ${url}`,
-            attachments: [
-              {
-                color: "good",
-                text: "Cloned"
-              },
-              {
-                color: "warning",
-                text: "Formatting"
-              }
-            ],
-            ts: result.ts
-          });
+        //   await slack.chat.update({
+        //     channel,
+        //     text: `Format ${url}`,
+        //     attachments: [
+        //       {
+        //         color: "good",
+        //         text: "Cloned"
+        //       },
+        //       {
+        //         color: "warning",
+        //         text: "Formatting"
+        //       }
+        //     ],
+        //     ts: result.ts
+        //   });
 
-          await sleep(2000);
+        //   await sleep(2000);
 
-          await slack.chat.update({
-            channel,
-            text: `Format ${url}`,
-            attachments: [
-              {
-                color: "good",
-                text: "Cloned"
-              },
-              {
-                color: "good",
-                text: "Formatted"
-              },
-              {
-                color: "warning",
-                text: "Pushing"
-              }
-            ],
-            ts: result.ts
-          });
+        //   await slack.chat.update({
+        //     channel,
+        //     text: `Format ${url}`,
+        //     attachments: [
+        //       {
+        //         color: "good",
+        //         text: "Cloned"
+        //       },
+        //       {
+        //         color: "good",
+        //         text: "Formatted"
+        //       },
+        //       {
+        //         color: "warning",
+        //         text: "Pushing"
+        //       }
+        //     ],
+        //     ts: result.ts
+        //   });
 
-          await sleep(2000);
+        //   await sleep(2000);
 
-          await slack.chat.update({
-            channel,
-            text: `Format ${url} - Done`,
-            attachments: [],
-            ts: result.ts
-          });
-        } catch (e) {
-          console.log(e);
-        }
+        //   await slack.chat.update({
+        //     channel,
+        //     text: `Format ${url} - Done`,
+        //     attachments: [],
+        //     ts: result.ts
+        //   });
+        // } catch (e) {
+        //   console.log(e);
+        // }
         return false;
       }
     })

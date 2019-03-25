@@ -1,4 +1,5 @@
 const { pubsub, PubSubIDs } = require(`./subscriptions`);
+const { SlackTaskState } = require(`../utils/slack`);
 
 const jobQueue = new Map();
 
@@ -36,14 +37,20 @@ exports.newJob = task => {
   const job = {
     uuid,
     task,
-    status: `Starting`,
+    // status: `Starting`,
     setStatus: status => {
       job.status = status;
+      task.context.slackMessage.setStatus({
+        text: status,
+        state: SlackTaskState.PROGRESS
+      });
+
       pubsub.publish(PubSubIDs.JOB_CHANGED, {
         jobChanged: job
       });
     }
   };
+  job.setStatus(`Starting`);
   currentJob = job;
   pubsub.publish(PubSubIDs.CURRENT_JOB, {
     currentJob: job

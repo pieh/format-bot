@@ -7,6 +7,7 @@ const {
   newJob,
   noNewJobs
 } = require(`../schema/jobs`);
+const { createSlackTracker, SlackTaskState, setTasks } = require(`./slack`);
 
 const getTaskID = task => `${task.type}-${JSON.stringify(task.args)}`;
 
@@ -22,10 +23,10 @@ const queue = new BetterQueue(
 
     try {
       await handler(task.args, job);
-      job.setStatus(`Finished`);
+      job.setStatus(`Finished`, SlackTaskState.FINISHED);
       cb();
     } catch (e) {
-      job.setStatus(`Error`);
+      job.setStatus(`Error`, SlackTaskState.ERROR);
       cb(e);
     }
   },
@@ -76,6 +77,20 @@ init().then(() => {
   queue.resume();
 });
 
-exports.format = pr => {
-  queue.push({ type: "format", args: { pr } });
+const format = pr => {
+  const slackMessage = createSlackTracker(``, {
+    text: `Queued`,
+    state: SlackTaskState.QUEUED
+  });
+  queue.push({
+    type: "format",
+    args: { pr },
+    context: {
+      slackMessage
+    }
+  });
 };
+
+exports.format = format;
+
+setTasks({ format });
