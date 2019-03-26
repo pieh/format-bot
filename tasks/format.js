@@ -99,7 +99,7 @@ module.exports = async (
       const addRemoteCmd = `git remote add upstream https://github.com/${owner}/${repo}`;
       await pExec(addRemoteCmd, execArgs);
 
-      const fetchCmd = `git fetch --depth=1 upstream master:master`;
+      const fetchCmd = `git fetch upstream master:master`;
       await pExec(fetchCmd, execArgs);
 
       setStatus(`Merging upstream/master`);
