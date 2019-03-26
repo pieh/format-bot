@@ -78,9 +78,9 @@ module.exports = async (
 
   try {
     setStatus(`Cloning PR branch`);
-    const cloneCmd = `git clone --single-branch --branch ${
-      PRBranchInfo.ref
-    } --depth=1 https://${accessToken}@github.com/${PRBranchInfo.owner}/${
+    const cloneCmd = `git clone --single-branch --branch ${PRBranchInfo.ref} ${
+      mergeMaster ? `` : `--depth=1`
+    } https://${accessToken}@github.com/${PRBranchInfo.owner}/${
       PRBranchInfo.repo
     }.git ${repoCloneDir}`;
 
