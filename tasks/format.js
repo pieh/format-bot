@@ -103,7 +103,7 @@ module.exports = async (
       await pExec(fetchCmd, execArgs);
 
       setStatus(`Merging upstream/master`);
-      const mergeCmd = `get merge upstream/master`;
+      const mergeCmd = `git merge upstream/master`;
       await pExec(mergeCmd, execArgs);
     }
 
