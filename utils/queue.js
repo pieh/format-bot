@@ -77,9 +77,11 @@ init().then(() => {
   queue.resume();
 });
 
-const format = async pr => {
+const format = async (pr, mergeMaster = false) => {
   const slackMessage = await createSlackTracker({
-    text: `Format PR - <https://github.com/gatsbyjs/gatsby/pull/${pr}|#${pr}>`,
+    text: `${
+      mergeMaster ? `Merge upstream/master and format` : `Format`
+    } PR - <https://github.com/gatsbyjs/gatsby/pull/${pr}|#${pr}>`,
     status: {
       text: `Queued`,
       state: SlackTaskState.QUEUED
@@ -87,7 +89,7 @@ const format = async pr => {
   });
   queue.push({
     type: "format",
-    args: { pr },
+    args: { pr, mergeMaster },
     context: {
       slackMessage
     }

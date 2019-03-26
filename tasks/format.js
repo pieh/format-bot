@@ -39,7 +39,10 @@ const getChangedFiles = async pr => {
     .map(file => file.filename);
 };
 
-module.exports = async ({ pr }, { setStatus, updateText, getText }) => {
+module.exports = async (
+  { pr, mergeMaster },
+  { setStatus, updateText, getText }
+) => {
   const initialText = getText();
 
   const repoCloneDir = path.join(process.cwd(), `_pr_clone_${pr}`);
@@ -64,7 +67,7 @@ module.exports = async ({ pr }, { setStatus, updateText, getText }) => {
     return { format, fileList, commands: lintStagedConf[format] };
   });
 
-  if (!tasks.some(task => task.fileList.length > 0)) {
+  if (!mergeMaster && !tasks.some(task => task.fileList.length > 0)) {
     console.log("Nothing to format");
     return;
   }
@@ -74,7 +77,7 @@ module.exports = async ({ pr }, { setStatus, updateText, getText }) => {
   };
 
   try {
-    setStatus(`Cloning`);
+    setStatus(`Cloning PR branch`);
     const cloneCmd = `git clone --single-branch --branch ${
       PRBranchInfo.ref
     } --depth=1 https://${accessToken}@github.com/${PRBranchInfo.owner}/${
@@ -87,7 +90,22 @@ module.exports = async ({ pr }, { setStatus, updateText, getText }) => {
     const pushCmd = `git push origin ${PRBranchInfo.ref}`;
 
     await pExec(cloneCmd, execArgs);
+
     execArgs.cwd = repoCloneDir;
+
+    if (mergeMaster) {
+      setStatus(`Fetching upstream/master`);
+      // create remote
+      const addRemoteCmd = `git remote add upstream https://github.com/${owner}/${repo}`;
+      await pExec(addRemoteCmd, execArgs);
+
+      const fetchCmd = `git fetch --depth=1 upstream master:master`;
+      await pExec(fetchCmd, execArgs);
+
+      setStatus(`Merging upstream/master`);
+      const mergeCmd = `get merge upstream/master`;
+      await pExec(mergeCmd, execArgs);
+    }
 
     setStatus(`Formatting`);
 

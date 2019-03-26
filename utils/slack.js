@@ -87,7 +87,7 @@ const parseCommand = (cmd, context) =>
           });
         } else if (!isNaN(args.ref)) {
           url = `https://github.com/gatsbyjs/gatsby/pull/${args.ref}`;
-          tasks.format(args.ref);
+          tasks.format(args.ref, false);
         } else {
           await slack.chat.postEphemeral({
             channel,
@@ -97,82 +97,25 @@ const parseCommand = (cmd, context) =>
           return false;
         }
 
-        // try {
-        //   const result = await slack.chat.postMessage({
-        //     channel,
-        //     text: `Format ${url}`,
-        //     attachments: [
-        //       {
-        //         color: "#439FE0",
-        //         text: "Queued"
-        //       }
-        //     ]
-        //   });
-        //   await sleep(2000);
+        return false;
+      }
+    })
+    .command({
+      command: `merge-master [ref]`,
+      desc: `Merge master into PR branch`,
+      handler: async args => {
+        if (!isNaN(args.ref)) {
+          url = `https://github.com/gatsbyjs/gatsby/pull/${args.ref}`;
+          tasks.format(args.ref, true);
+        } else {
+          await slack.chat.postEphemeral({
+            channel,
+            text: `Not recognized argument to merge-master function. Must be PR number`,
+            user: context.user_id
+          });
+          return false;
+        }
 
-        //   await slack.chat.update({
-        //     channel,
-        //     text: `Format ${url}`,
-        //     attachments: [
-        //       {
-        //         color: "warning",
-        //         text: "Cloning"
-        //       }
-        //     ],
-        //     ts: result.ts
-        //   });
-
-        //   await sleep(2000);
-
-        //   await slack.chat.update({
-        //     channel,
-        //     text: `Format ${url}`,
-        //     attachments: [
-        //       {
-        //         color: "good",
-        //         text: "Cloned"
-        //       },
-        //       {
-        //         color: "warning",
-        //         text: "Formatting"
-        //       }
-        //     ],
-        //     ts: result.ts
-        //   });
-
-        //   await sleep(2000);
-
-        //   await slack.chat.update({
-        //     channel,
-        //     text: `Format ${url}`,
-        //     attachments: [
-        //       {
-        //         color: "good",
-        //         text: "Cloned"
-        //       },
-        //       {
-        //         color: "good",
-        //         text: "Formatted"
-        //       },
-        //       {
-        //         color: "warning",
-        //         text: "Pushing"
-        //       }
-        //     ],
-        //     ts: result.ts
-        //   });
-
-        //   await sleep(2000);
-
-        //   await slack.chat.update({
-        //     channel,
-        //     text: `Format ${url} - Done`,
-        //     attachments: [],
-        //     ts: result.ts
-        //   });
-        // } catch (e) {
-        //   console.log(e);
-        // }
         return false;
       }
     })
