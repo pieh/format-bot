@@ -145,10 +145,10 @@ module.exports = async (
 
     try {
       await pExec(commitFilesCmd, execArgs);
-      await pExec(pushCmd, execArgs);
     } catch {
       // commit exits with non-zero if there is nothing to commit
     }
+    await await pExec(pushCmd, execArgs);
   } finally {
     await setStatus(`Cleaning up`);
     await fs.removeSync(repoCloneDir);
