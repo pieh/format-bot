@@ -93,6 +93,9 @@ module.exports = async (
 
     execArgs.cwd = repoCloneDir;
 
+    await pExec(gitConfigEmailCmd, execArgs);
+    await pExec(gitConfigNameCmd, execArgs);
+
     if (mergeMaster) {
       setStatus(`Fetching upstream/master`);
       // create remote
@@ -139,8 +142,6 @@ module.exports = async (
     }
 
     setStatus(`Committing and pushing`);
-    await pExec(gitConfigEmailCmd, execArgs);
-    await pExec(gitConfigNameCmd, execArgs);
 
     try {
       await pExec(commitFilesCmd, execArgs);
