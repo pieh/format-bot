@@ -103,7 +103,7 @@ const parseCommand = (cmd, context) => {
       desc: `Format PR`,
       builder: prNumberOptionBuilder,
       handler: async args => {
-        tasks.format(args.ref, false);
+        tasks.format(args.prNumber, false);
 
         return false;
       }
@@ -113,7 +113,7 @@ const parseCommand = (cmd, context) => {
       desc: `Merge master into PR branch`,
       builder: prNumberOptionBuilder,
       handler: async args => {
-        tasks.format(args.ref, true);
+        tasks.format(args.prNumber, true);
 
         return false;
       }
