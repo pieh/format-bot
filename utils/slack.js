@@ -93,6 +93,7 @@ const parseCommand = (cmd, context) => {
             args.prNumber
           }\` is not a number.`;
         }
+        return true;
       });
 
   const argsHandler = yargs
