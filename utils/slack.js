@@ -71,56 +71,76 @@ const createSlackTracker = async ({ text, status }) => {
 
 exports.createSlackTracker = createSlackTracker;
 
-const parseCommand = (cmd, context) =>
-  yargs
-    .command({
-      command: `format [ref]`,
-      desc: `Format PR or master branch`,
-      handler: async args => {
-        let url = null;
-        if (args.ref === `master`) {
-          url = `https://github.com/gatsbyjs/gatsby`;
-          await slack.chat.postEphemeral({
-            channel,
-            text: `Not supported yet`,
-            user: context.user_id
-          });
-        } else if (!isNaN(args.ref)) {
-          url = `https://github.com/gatsbyjs/gatsby/pull/${args.ref}`;
-          tasks.format(args.ref, false);
-        } else {
-          await slack.chat.postEphemeral({
-            channel,
-            text: `Not recognized argument to format function. Must be PR number or "master"`,
-            user: context.user_id
-          });
-          return false;
+const parseCommand = (cmd, context) => {
+  const messageJustTheUser = async obj => {
+    await slack.chat.postEphemeral({
+      channel: context.channel_id,
+      user: context.user_id,
+      ...obj
+    });
+  };
+
+  const prNumberOptionBuilder = yargs =>
+    yargs
+      .option("pr-number", {
+        requiresArg: true,
+        demandOption: true,
+        desc: "PR number"
+      })
+      .check(args => {
+        if (isNaN(args.prNumber)) {
+          throw `PR number must be ... a number - \`${
+            args.prNumber
+          }\` is not a number.`;
         }
+      });
+
+  const argsHandler = yargs
+    .reset()
+    .command({
+      command: `format <pr-number>`,
+      desc: `Format PR`,
+      builder: prNumberOptionBuilder,
+      handler: async args => {
+        tasks.format(args.ref, false);
 
         return false;
       }
     })
     .command({
-      command: `merge-master [ref]`,
+      command: `merge-master <pr-number>`,
       desc: `Merge master into PR branch`,
+      builder: prNumberOptionBuilder,
       handler: async args => {
-        if (!isNaN(args.ref)) {
-          url = `https://github.com/gatsbyjs/gatsby/pull/${args.ref}`;
-          tasks.format(args.ref, true);
-        } else {
-          await slack.chat.postEphemeral({
-            channel,
-            text: `Not recognized argument to merge-master function. Must be PR number`,
-            user: context.user_id
-          });
-          return false;
-        }
+        tasks.format(args.ref, true);
 
         return false;
       }
     })
-    .parse(cmd);
-
+    .scriptName(`/oss`)
+    .demandCommand(
+      1,
+      `Use "/oss --help" to see all available commands and options.`
+    )
+    .help(true)
+    .version(false)
+    .showHelpOnFail(true)
+    .recommendCommands()
+    .strict()
+    .wrap(120)
+    .parse(cmd, async (err, argv, output) => {
+      if (output) {
+        let outputText = `\`\`\`\n${output}\n\`\`\``;
+        if (err) {
+          outputText =
+            `Command \`/oss${cmd ? ` ${cmd}` : ``}\` failed.\n` + outputText;
+        }
+        await messageJustTheUser({
+          text: outputText
+        });
+      }
+    });
+};
 exports.handler = (req, res) => {
   res.send(200, "");
   parseCommand(req.body.text, req.body);
