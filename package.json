@@ -27,6 +27,7 @@
     "yargs": "^13.2.2"
   },
   "engines": {
-    "yarn": "1.x"
+    "yarn": "1.x",
+    "node": "10.x"
   }
 }
