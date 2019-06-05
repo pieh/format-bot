@@ -84,9 +84,9 @@ module.exports = async (
       PRBranchInfo.repo
     }.git ${repoCloneDir}`;
 
-    const gitConfigEmailCmd = `git config user.email "misiek.piechowiak@gmail.com"`;
-    const gitConfigNameCmd = `git config user.name "GatsbyJS Bot"`;
-    const commitFilesCmd = `git commit --author="GatsbyJS Bot<misiek.piechowiak@gmail.com>" --no-verify -m "chore: format"`;
+    const gitConfigEmailCmd = `git config user.email "mathews.kyle+gatsbybot@gmail.com"`;
+    const gitConfigNameCmd = `git config user.name "gatsbybot"`;
+    const commitFilesCmd = `git commit --author="gatsbybot<mathews.kyle+gatsbybot@gmail.com>" --no-verify -m "chore: format"`;
     const pushCmd = `git push origin ${PRBranchInfo.ref}`;
 
     await pExec(cloneCmd, execArgs);
