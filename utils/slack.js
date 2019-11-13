@@ -73,11 +73,12 @@ exports.createSlackTracker = createSlackTracker;
 
 const parseCommand = (cmd, context) => {
   const messageJustTheUser = async obj => {
-    await slack.chat.postEphemeral({
+    const postEphemeralArgs = {
       channel: context.channel_id,
       user: context.user_id,
       ...obj
-    });
+    };
+    await slack.chat.postEphemeral(postEphemeralArgs);
   };
 
   const prNumberOptionBuilder = yargs =>
@@ -89,9 +90,7 @@ const parseCommand = (cmd, context) => {
       })
       .check(args => {
         if (isNaN(args.prNumber)) {
-          throw `PR number must be ... a number - \`${
-            args.prNumber
-          }\` is not a number.`;
+          throw `PR number must be ... a number - \`${args.prNumber}\` is not a number.`;
         }
         return true;
       });
