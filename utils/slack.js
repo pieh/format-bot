@@ -78,6 +78,7 @@ const parseCommand = (cmd, context) => {
       user: context.user_id,
       ...obj
     };
+    console.log(postEphemeralArgs);
     await slack.chat.postEphemeral(postEphemeralArgs);
   };
 
