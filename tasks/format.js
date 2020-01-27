@@ -31,7 +31,7 @@ const getChangedFiles = async pr => {
   const result = await octokit.pulls.listFiles({
     owner,
     repo,
-    number: pr
+    pull_number: pr
   });
 
   return result.data
