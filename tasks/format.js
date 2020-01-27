@@ -67,6 +67,12 @@ module.exports = async (
     return { format, fileList, commands: lintStagedConf[format] };
   });
 
+  console.log({
+    changedFiles,
+    formats,
+    tasks
+  });
+
   if (!mergeMaster && !tasks.some(task => task.fileList.length > 0)) {
     console.log("Nothing to format");
     return;
