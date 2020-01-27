@@ -13,7 +13,7 @@ const getPRBranchInfo = async pr => {
   const result = await octokit.pulls.get({
     owner,
     repo,
-    number: pr
+    pull_number: pr
   });
 
   return {
