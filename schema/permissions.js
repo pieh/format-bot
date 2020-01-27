@@ -5,7 +5,7 @@ const octokit = require(`../utils/octokit`);
 const GatsbyAdminTeamID = `2772524`;
 
 const getAdminTeamMembersImpl = async () => {
-  const results = await octokit.teams.listMembers({
+  const results = await octokit.teams.listMembersLegacy({
     team_id: GatsbyAdminTeamID
   });
 
