@@ -84,16 +84,16 @@ module.exports = async (
 
   try {
     setStatus(`Cloning PR branch`);
-    const cloneCmd = `git clone --single-branch --branch ${PRBranchInfo.ref} ${
-      mergeMaster ? `` : `--depth=1`
-    } https://${accessToken}@github.com/${PRBranchInfo.owner}/${
-      PRBranchInfo.repo
-    }.git ${repoCloneDir}`;
+    const cloneCmd = `git clone --single-branch --branch "${
+      PRBranchInfo.ref
+    }" ${mergeMaster ? `` : `--depth=1`} https://${accessToken}@github.com/${
+      PRBranchInfo.owner
+    }/${PRBranchInfo.repo}.git ${repoCloneDir}`;
 
     const gitConfigEmailCmd = `git config user.email "mathews.kyle+gatsbybot@gmail.com"`;
     const gitConfigNameCmd = `git config user.name "gatsbybot"`;
     const commitFilesCmd = `git commit --author="gatsbybot<mathews.kyle+gatsbybot@gmail.com>" --no-verify -m "chore: format"`;
-    const pushCmd = `git push origin ${PRBranchInfo.ref}`;
+    const pushCmd = `git push origin "${PRBranchInfo.ref}"`;
 
     await pExec(cloneCmd, execArgs);
 
