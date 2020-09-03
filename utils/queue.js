@@ -26,6 +26,7 @@ const queue = new BetterQueue(
       job.setStatus(`Finished`, SlackTaskState.FINISHED);
       cb();
     } catch (e) {
+      console.log(e)
       job.setStatus(`Error`, SlackTaskState.ERROR);
       cb(e);
     }
