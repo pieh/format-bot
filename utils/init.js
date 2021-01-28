@@ -22,6 +22,9 @@ const init = () =>
   addGatsbyDevDeps().then((l) => {
     lintStagedConf = Object.entries(l).reduce((acc, [selector, commands]) => {
       try {
+        if (!Array.isArray(commands)) {
+          commands = [commands];
+        }
         acc[selector] = commands.map(findBin);
       } catch (e) {
         console.log(e);
