@@ -25,6 +25,9 @@ const init = () =>
         if (!Array.isArray(commands)) {
           commands = [commands];
         }
+        if (!commands.includes(`git add`)) {
+          commands.push(`git add`);
+        }
         acc[selector] = commands.map(findBin);
       } catch (e) {
         console.log(e);
