@@ -5,7 +5,7 @@ const { addGatsbyDevDeps } = require(`./build`);
 
 const binCache = new Map();
 
-const findBin = cmd => {
+const findBin = (cmd) => {
   const [binName, ...args] = parse(cmd);
   if (binCache.has(binName)) {
     return { bin: binCache.get(binName), args };
@@ -19,13 +19,20 @@ const findBin = cmd => {
 
 let lintStagedConf = null;
 const init = () =>
-  addGatsbyDevDeps().then(l => {
+  addGatsbyDevDeps().then((l) => {
     lintStagedConf = Object.entries(l).reduce((acc, [selector, commands]) => {
       try {
         acc[selector] = commands.map(findBin);
-      } catch (e) {}
+      } catch (e) {
+        console.log(e);
+      }
       return acc;
     }, {});
+
+    console.log(`init`, {
+      raw: l,
+      processed: lintStagedConf,
+    });
 
     return lintStagedConf;
   });
